@@ -1,0 +1,2 @@
+# friendly
+generate fake identity
