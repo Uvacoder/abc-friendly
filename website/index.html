@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <link rel="stylesheet" href="style/screen.css" type="text/css" media="screen"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+    <head>
+        <title>
+            Friendly
+        </title>
+        <script src="js/rounded_corner_lite.inc.js" type="text/javascript"></script>
+
+        <script type="text/javascript">
+            window.onload = function() {
+                settings = {
+                    tl: { radius: 10 },
+                    tr: { radius: 10 },
+                    bl: { radius: 10 },
+                    br: { radius: 10 },
+                    antiAlias: true,
+                    autoPad: true,
+                    validTags: ["div"]
+                }
+                var versionBox = new curvyCorners(settings, document.getElementById("version"));
+                versionBox.applyCornersToAll();
+            }
+        </script>
+    </head>
+
+    <body>
+        <div id="main">
+            <h1>Friendly</h1>
+            <div id="version" class="clickable" onclick='document.location = "http://rubyforge.org/projects/friendly"; return false'></div>
+                <p>Get version</p>
+                <a href="http://rubyforge.org/projects/friendly" class="numbers">1.0.0</a>
+            </div>
+            <h2>Description</h2>
+            <p>
+                Friendly, a port of data: Friendly from perl, i ued to easily generate fake data: names, addresess, phone numbers, etc.  The port was motivated by a need for a bunch of fake data to make good-looking screenshots for <a href="http://catchthebest.com">Catch the Best</a>. :)</p>
+            </p>
+            <h2>Installing</h2>
+            <p>
+                pre class='syntax'><span class="ident">sudo</span> <span class="ident">gem</span> <span class="ident">install</span> <span class="ident">friendly</span></pre>
+            </p>
+            <h2>Usage</h2>
+            <p>Friendly::Name.name =&gt; &#8220;Bob Hope&#8221;</p>
+            <p><a href="/rdoc">read the docs</a></p>
+
+            <h2>Contact</h2>
+            <p>
+                Comment on issue are welcome
+            </p>
+        </div>
+        <script src="http://www.google-analytics.com/urchin.js" type="text/javascript">
+        </script>
+        <script type="text/javascript">
+        _uacct = "UA-97250-13";
+        urchinTracker();
+        </script>
+    </body>
+</html>

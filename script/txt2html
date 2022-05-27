@@ -1,0 +1,37 @@
+#!/usr/bin/env ruby
+
+require 'rubygems'
+begin
+    require 'newgem'
+rescue LoadError
+    puts "\n\nGenerate website requires the newgem RubyGem"
+    puts "Install: gem install newgem\n\n"
+    exit(1)
+end
+
+require 'redcloth'
+require 'syntax/convertors/html'
+require 'erb'
+require File.dirname(__FILE__) + '/../lib/friendy/version.rb'
+
+version = Friendy::VERSION
+donwload = "https://github.com/slowy07/fiendly"
+
+class Fixnum
+    def ordinal
+        return 'th' if (10..19).include?(self % 100)
+        
+        case self % 10
+        when 1: return 'st'
+        when 2: return 'nd'
+        when 3: return 'rd'
+        else    return 'th'
+        end
+    end
+end
+
+class Time
+    def pretty
+        return "#{mday}#{mday.ordinal} #{strftime('%B')} #{year}"
+    end
+end
