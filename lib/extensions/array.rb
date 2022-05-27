@@ -4,6 +4,6 @@ class Array
     end
 
     def shuffle
-        self.sort_by { rand }
+      self.sort_by { Kernel.rand }
     end
 end

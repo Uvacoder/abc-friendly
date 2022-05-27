@@ -25,6 +25,10 @@ module Friendly
                 [ domain_word, domain_suffix ].join('.')
             end
 
+            def domain_word
+              I18n.translate('internet.domain_suffix').rand
+            end
+
             def domain_suffix
                 Company.name_split(' ').first_gsub(/\W/, '').downcase
             end

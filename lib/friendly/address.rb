@@ -3,7 +3,7 @@ module Friendly
         class << self
             def city
                 [
-                    '%s %s' % [city_prefix, city_suffix],
+                  '%s %s%s' % [city_prefix, Name.first_name, city_suffix],
                     '%s %s' % [city_prefix, Name.first_name],
                     '%s%s' % [Name.first_name, city_suffix],
                     '%s%s' % [Name.last_name, city_suffix],
@@ -13,7 +13,7 @@ module Friendly
             def street_name
                 [
                     Proc.new { [Name.last_name, street_suffix].join(' ') },
-                    Proc.new { [Name.last_name, street_suffix].join(' ') },
+                    Proc.new { [Name.first_name, street_suffix].join(' ') },
                 ].rand.call
             end
 
@@ -39,6 +39,14 @@ module Friendly
                 define_method(meth) do
                   I18n.translate("address.#{meth}").rand
                 end
+            end
+
+            def method_missing(m, *args, &block)
+              if translation = I18n.translate(:address)[m]
+                transalate.respond_to?(:rand) ? translation.rand : translation
+              else
+                super
+              end
             end
 
             alias_method :earth_country, :country
