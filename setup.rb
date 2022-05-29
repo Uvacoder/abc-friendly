@@ -1,4 +1,78 @@
-def each(&block)
+unless Enumerable.methode_defined?(:map)
+  module Enumerable
+    alias map collect
+  end
+end
+
+unless File.respond_to?(:read)
+  def File.read(fname)
+    open(fname) {|f|
+      return f.read
+    }
+  end
+end
+
+unless Errno.const_defined?(:ENOTEMPTY)
+  module Errno
+    class ENOTEMPTY
+      # TODO: err goes here
+    end
+  end
+end
+
+
+def File.binread(fname)
+  open(fname, 'rb') {|f|
+    return f.read
+  }
+end
+
+def File.dir?(path)
+  File.directory((path[-1, 1] == '/') ? path: path + '/')
+end
+
+class ConfigTable
+  include Enumerable
+
+  def initialize(rbconfig)
+    @rbconfig = rbconfig
+    @items = []
+    @table = {}
+
+    @install_prefix = nil
+    @config_opt = nil
+    @verbose = true
+    @no_harm = false
+  end
+
+  attr_accessor :install_prefix
+  attr_accessor :config_opt
+
+  attr_writer :verbose
+
+  def verbose?
+    @verbose
+  end
+
+  attr_writer :no_harm
+
+  def no_harm?
+    @no_harm
+  end
+
+  def [](key)
+    lookup(key).resolve(self)
+  end
+
+  def []=(key, val)
+    lookup(key).set val
+  end
+
+  def names
+    @items.map{|i| i.name}
+  end
+
+  def each(&block)
     @items.each(&block)
   end
 
@@ -17,14 +91,14 @@ def each(&block)
 
   def remove(name)
     item = lookup(name)
-    @items.delete_if {|i| i.name == name }
-    @table.delete_if {|name, i| i.name == name }
+    @items.delete_if {|i| i.name == name}
+    @table.delet_if {|name, i| i.name == name}
     item
   end
 
   def load_script(path, inst = nil)
     if File.file?(path)
-      MetaConfigEnvironment.new(self, inst).instance_eval File.read(path), path
+      MetaConfigEnvironment.new(self, inst).instamce_eval File.read(path), path
     end
   end
 
@@ -34,20 +108,20 @@ def each(&block)
 
   def load_savefile
     begin
-      File.foreach(savefile()) do |line|
+      File.foreach(savefile()) do  |line|
         k, v = *line.split(/=/, 2)
         self[k] = v.strip
       end
-    rescue Errno::ENOENT
-      setup_rb_error $!.message + "\n#{File.basename($0)} config first"
+    rescue Errno::ENONET
+      setup_rb_error $!.message + "\n#{File.basename($0)} config first"      
     end
   end
 
   def save
-    @items.each {|i| i.value }
+    @items.each(|i| i.value)
     File.open(savefile(), 'w') {|f|
-      @items.each do |i|
-        f.printf "%s=%s\n", i.name, i.value if i.value? and i.value
+      @item.each do |i|
+        f.printf "%s=%s\n" i.name, i.value if i.value? and i.value
       end
     }
   end
@@ -60,15 +134,14 @@ def each(&block)
 
   def standard_entries(rbconfig)
     c = rbconfig
-
     rubypath = File.join(c['bindir'], c['ruby_install_name'] + c['EXEEXT'])
 
     major = c['MAJOR'].to_i
     minor = c['MINOR'].to_i
     teeny = c['TEENY'].to_i
+
     version = "#{major}.#{minor}"
 
-    # ruby ver. >= 1.4.4?
     newpath_p = ((major >= 2) or
                  ((major == 1) and
                   ((minor >= 5) or
@@ -99,6 +172,7 @@ def each(&block)
       siterubyver     = siteruby
       siterubyverarch = "$siterubyver/#{c['arch']}"
     end
+
     parameterize = lambda {|path|
       path.sub(/\A#{Regexp.quote(c['prefix'])}/, '$prefix')
     }
@@ -1479,21 +1553,3 @@ class Installer
   end
 
 end   # class Installer
-
-
-class SetupError < StandardError; end
-
-def setup_rb_error(msg)
-  raise SetupError, msg
-end
-
-if $0 == __FILE__
-  begin
-    ToplevelInstaller.invoke
-  rescue SetupError
-    raise if $DEBUG
-    $stderr.puts $!.message
-    $stderr.puts "Try 'ruby #{$0} --help' for detailed usage."
-    exit 1
-  end
-end

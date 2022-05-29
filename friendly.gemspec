@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
     s.summary   = %q{Easily generate fake data}
     s.description = %q{Friendly, a port of Data::Friendly from Perl, is used to easily generate fake data: names, addresses, phone numbers, etc.}
 
-    s.add_dependency('i18n', '~> 0.5.0')
+    s.add_dependency('i18n', '~> 0.4')
 
     s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
     s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
