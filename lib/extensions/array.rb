@@ -1,9 +1,7 @@
 class Array
-    def rand
-        self[Kernel.rand(length)]
+  unless self.method_defined? :sample
+    def sample
+      choice
     end
-
-    def shuffle
-      self.sort_by { Kernel.rand }
-    end
+  end
 end

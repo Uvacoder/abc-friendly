@@ -1,59 +1,52 @@
 module Friendly
-    class Address
+    class Address < Base
+        flexible :address
+
         class << self
             def city
-                [
-                  '%s %s%s' % [city_prefix, Name.first_name, city_suffix],
-                    '%s %s' % [city_prefix, Name.first_name],
-                    '%s%s' % [Name.first_name, city_suffix],
-                    '%s%s' % [Name.last_name, city_suffix],
-                ].rand
+                parse('address.city')
             end
 
             def street_name
-                [
-                    Proc.new { [Name.last_name, street_suffix].join(' ') },
-                    Proc.new { [Name.first_name, street_suffix].join(' ') },
-                ].rand.call
+                parse('address.street_name')
             end
 
             def street_address(include_secondary = false)
-                Friendly.numerify("#{I18n.translate('address.street_address').rand} #{street_name}#{' ' + secondary_address if include_secondary}")
+                numerify(parse('address.street_address') + (include_secondary ? ' ' + secondary_address : ''))
             end
 
             def secondary_address
-                Friendly.numerify(I18n.translate('address.secondary_address').rand)
+                numerify(fetch('address.secondary_address'))
             end
 
             def zip_code
-                Friendly.bothify(I18n.translate('address.zip_code').rand).upcase
+                bothify(fetch('address.postcode'))
             end
+
             alias_method :zip, :zip_code
             alias_method :postcode, :zip_code
 
-            def uk_country
-                ['England', 'Scotland', 'Wales', 'Northern Ireland'].rand
+            def street_suffix; fetch('address.street_suffix'); end
+            def city_suffix;   fetch('address.city_suffix');   end
+            def city_prefix;   fetch('address.city_prefix');   end
+            def state_abbr;    fetch('address.state_abbr');  end
+            def state;         fetch('address.state');       end
+            def country;       fetch('address.country');     end
+
+            def latitude
+                ((rand * 180) - 90).to_s
             end
 
-            %w(street_suffix city_suffix city_prefix state_abbr state country county).each do |meth|
-                define_method(meth) do
-                  I18n.translate("address.#{meth}").rand
-                end
-            end
-
-            def method_missing(m, *args, &block)
-              if translation = I18n.translate(:address)[m]
-                transalate.respond_to?(:rand) ? translation.rand : translation
-              else
-                super
-              end
+            def longitude
+                ((rand * 360) - 180).to_s
             end
 
             alias_method :earth_country, :country
             alias_method :us_state, :state
             alias_method :us_state_abbr, :state_abbr
             alias_method :uk_postcode, :zip_code
-            alias_method :uk_county, :county
+            def uk_county; county; end
         end
     end
 end
+

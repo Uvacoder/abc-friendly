@@ -1,45 +1,64 @@
 module Friendly
-    class internet
+    class Internet < Base
         class << self
             def email(name = nil)
                 [ user_name(name), domain_name ].join('@')
             end
 
             def free_email(name = nil)
-                [ user_name(name), I18n.translate('internet.free_email').rand ].join('@')
-            end
+                return name.scan(/\w+/).shuffle.join(%w(. _).sample).downcase if name
 
-            def user_name(name = nil)
-                return name.scan(/\w+/).shuffle.join(%w(. _).rand).downcase if name
-                [
+                fix_umlauts([
                     Proc.new { Name.first_name.gsub(/\W/, '').downcase },
                     Proc.new {
                         [ Name.first_name, Name.last_name ].map {|n|
-                            n.gsub(/\W/, '').
-                        }.join(%(. _).rand).downcase
+                            n.gsub(/\W/, '')
+                        }.join(%w(. _).sample).downcase
                     }
-                ].rand_call
+                ].sample.call)
             end
 
             def domain_name
-                [ domain_word, domain_suffix ].join('.')
+                [ fix_umlauts(domain_word), domain_suffix ].join('.')
+            end
+
+            def fix_umlauts(string)
+                string.gsub(/[äöüß]/i) do |match|
+                    case match.downcase
+                        when "ä" 'ae'
+                        when "ö" 'oe'
+                        when "ü" 'ue'
+                        when "ß" 'ss'
+                    end
+                end
             end
 
             def domain_word
-              I18n.translate('internet.domain_suffix').rand
+                Company.name.split(' ').first.gsub(/\W/, '').downcase
             end
 
             def domain_suffix
-                Company.name_split(' ').first_gsub(/\W/, '').downcase
+                fetch('internet.domain_suffix')
             end
 
-            def ip_v4_address
+            def ip_v4_addres
+                ary = (2..254).to_a
                 [
-                    (0..255).to_a.rand,
-                    (0..255).to_a.rand,
-                    (0..255).to_a.rand,
-                    (0..255).to_a.rand
+                    ary.sample,
+                    ary.sample,
+                    ary.sample,
+                    ary.sample,
                 ].join('.')
+            end
+
+            def ip_v6_addres
+                @@ip_v6_space ||= (0..65535).to_a
+                container = (1..8).map{ |_| @@ip_v6_space.sample }
+                container.map{ |n| n.to_s(16) }.join(':')
+            end
+
+            def url
+                "http://#{domain_name}/#{user_name}"
             end
         end
     end
