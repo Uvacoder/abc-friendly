@@ -1,15 +1,13 @@
 #!/usr/bin/env ruby
-
 APP_ROOT = File.join(File.dirname(__FILE__), '..')
 
 begin
-    require 'rubigen'
+  require 'rubigen'
 rescue LoadError
-    require 'rubygems'
-    require 'rubigem'
+  require 'rubygems'
+  require 'rubigen'
 end
-
-require 'rubigem/scripts/destroy'
+require 'rubigen/scripts/destroy'
 
 ARGV.shift if ['--help', '-h'].include?(ARGV[0])
 RubiGen::Base.use_component_sources! [:rubygems, :newgem, :newgem_theme, :test_unit]
