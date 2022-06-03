@@ -44,7 +44,7 @@ module Friendly
         fetch(key).scan(/#\{([A-Za-z]+\.)?([^\}]+)\}([^#]+)?/).map {|kls, meth, etc| (kls ? Faker.const_get(kls.chop) : self).send(meth) + etc.to_s }.join
       end
 
-      def tranlate(*args)
+      def translate(*args)
         opts = args.last.is_a?(hash) ? args.pop : {}
         opts[:locale] ||= Friendly::Config.locale
         opts[:throw] = true
